@@ -8,7 +8,7 @@ app.use(bodyParser.urlencoded({extended:false}));
 app.use('/public' , express.static('public'));
 
 app.get('/',(req,res,next) => {
-    res.sendFile('D:/Practice/Node/Login/index.html');
+    res.sendFile('/index.html');
     //res.send('HEllo');
 
 })
