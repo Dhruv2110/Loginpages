@@ -8,7 +8,7 @@ app.use(bodyParser.urlencoded({extended:false}));
 app.use('/public' , express.static('public'));
 
 app.get('/',(req,res,next) => {
-    res.sendFile('/index.html');
+    res.sendFile('/index.html', { root: __dirname });
     //res.send('HEllo');
 
 })
@@ -24,10 +24,10 @@ app.post('/login',(req,res,next) => {
 
     if(username == 'abc' && password == '123')
     {
-        res.sendFile('/success.html');
+        res.sendFile('/success.html', { root: __dirname });
     }
     else{ 
-        res.sendFile('/error.html');
+        res.sendFile('/error.html', { root: __dirname });
     }
 
 
@@ -36,6 +36,6 @@ app.post('/login',(req,res,next) => {
 const PORT = process.env.PORT || 8000;
 
 app.listen(PORT,() => {
-    console.log('Listening on 8000',__dirname);
+    console.log('Listening on 8000');
 
 })
