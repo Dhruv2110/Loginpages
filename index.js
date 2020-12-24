@@ -24,10 +24,10 @@ app.post('/login',(req,res,next) => {
 
     if(username == 'abc' && password == '123')
     {
-        res.sendFile('D:/Practice/Node/Login/success.html');
+        res.sendFile('/success.html');
     }
     else{ 
-        res.sendFile('D:/Practice/Node/Login/error.html');
+        res.sendFile('/error.html');
     }
 
 
