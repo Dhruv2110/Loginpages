@@ -1,41 +1,69 @@
 const express = require('express');
 const app = express();
-const path = require('path');
 const bodyParser = require('body-parser');
-const popup = require('node-popup');
+const mongoose = require('mongoose');
+const session = require('express-session');
+const adminRoutes = require('./routes/adminRoutes');
+const userRoutes = require('./routes/userRoutes');
+const User = require('./models/user');
+const MongoDBStore = require('connect-mongodb-session')(session);
 
+const uri = "mongodb+srv://dhruv:dhruv21@mycluster.yvlzs.mongodb.net/LoginDB?retryWrites=true&w=majority";
+const store = new MongoDBStore({
+    uri: uri,
+    collection: 'users'
+  });
+  
 app.use(bodyParser.urlencoded({extended:false}));
 app.use('/public' , express.static('public'));
 
-app.get('/',(req,res,next) => {
-    res.sendFile('/index.html', { root: __dirname });
-    //res.send('HEllo');
 
-})
+app.use(
+    session({
+      secret: 'my secret',
+      resave: false,
+      saveUninitialized: false,
+      cookie: store
+    })
+  );
 
-app.get('/login',(req,res,next) => {
-    res.redirect('/');
-})
+app.use((req, res, next) => {
+      // throw new Error('Sync Dummy');
+      if (!req.session.user) {
+        return next();
+      }
+      User.findById(req.session.user._id)
+        .then(user => {
+          if (!user) {
+            return next();
+          }
+          req.user = user;
+          next();
+        })
+        .catch(err => {
+          next(new Error(err));
+        });
+});
 
-app.post('/login',(req,res,next) => {
-    const username = req.body.email;
-    const password = req.body.pass;
-    //console.log(username,password);
-
-    if(username == 'abc' && password == '123')
-    {
-        res.sendFile('/success.html', { root: __dirname });
-    }
-    else{ 
-        res.sendFile('/error.html', { root: __dirname });
-    }
+app.use('/',adminRoutes);
+app.use('/',userRoutes);
 
 
-})
 
 const PORT = process.env.PORT || 8000;
 
-app.listen(PORT,() => {
-    console.log('Listening on 8000');
-
-})
+mongoose.connect(uri,{
+    useCreateIndex: true,
+    useFindAndModify: false,
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).
+then(result => {
+    console.log("DB Connected!");
+    app.listen(PORT , () => {
+        console.log("App Is Running On 8000.");
+    })
+}).
+catch(err => {
+    console.log(err);
+});
