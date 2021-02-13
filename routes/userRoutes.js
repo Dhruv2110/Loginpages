@@ -1,10 +1,31 @@
 const router = require('express').Router();
 const User = require('../models/user');
 const path = require("path");
+const product = require('../models/add');
 
 router.get('/',(req,res,next) => {
     res.sendFile(path.join(__dirname,'../index.html'));
 
+})
+
+router.get('/product',(req,res,next) => {
+    res.sendFile(path.join(__dirname,'../addProduct.html'));
+
+})
+
+router.post('/addproduct', async (req,res,next) => {
+    //console.log(req.body);
+    const Product = {
+        Name:req.body.name,
+        Description:req.body.description,
+        Price:req.body.price,
+        IsSold:req.body.isSold
+    }
+    // const result = await product(Product).save();
+    const result = await product.insertMany(Product);
+
+    console.log(result);
+    
 })
 
 router.get('/login',(req,res,next) => {

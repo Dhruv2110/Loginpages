@@ -6,9 +6,10 @@ const session = require('express-session');
 const adminRoutes = require('./routes/adminRoutes');
 const userRoutes = require('./routes/userRoutes');
 const User = require('./models/user');
+const dotenv = require('dotenv').config();
 const MongoDBStore = require('connect-mongodb-session')(session);
 
-const uri = "mongodb+srv://dhruv:dhruv21@mycluster.yvlzs.mongodb.net/LoginDB?retryWrites=true&w=majority";
+const uri = process.env.MONGO_URI;
 const store = new MongoDBStore({
     uri: uri,
     collection: 'users'
@@ -50,7 +51,7 @@ app.use('/',userRoutes);
 
 
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT
 
 mongoose.connect(uri,{
     useCreateIndex: true,
